@@ -14,6 +14,11 @@ final resp = await http.get(
 
 On app launch, call GET /users/profile to fetch or initialize profile. Use POST /users/role to switch between rider/host. Do not allow 'admin' from client.
 
+Maps and charger discovery
+- See README_MAPS_INTEGRATION.md in this folder for Google Maps integration and clustering notes.
+- Backend endpoint: GET /chargers supports center/radius and viewport bounding box filters suitable for map panes.
+- Always pass Authorization header to access protected endpoints.
+
 Ensure your app .env has:
 - SUPABASE_URL
 - SUPABASE_ANON_KEY
