@@ -31,6 +31,34 @@ def get_me(user=Depends(get_current_user)):
     )
 
 
+class SessionValidationResponse(BaseModel):
+    """Represents the result of validating a Supabase session JWT on the backend."""
+    valid: bool = Field(..., description="True if the session token is valid")
+    user_id: str | None = Field(default=None, description="User ID (sub) if valid")
+    email: str | None = Field(default=None, description="Email if present")
+    role: str | None = Field(default=None, description="Role if present")
+    reason: str | None = Field(default=None, description="Reason if invalid")
+
+
+# PUBLIC_INTERFACE
+@router.get(
+    "/validate-session",
+    summary="Validate Supabase session JWT",
+    description="Validates the Authorization Bearer JWT (from Supabase Auth) and returns basic user info. "
+                "Mobile app must forward the Supabase session access_token as the Authorization header.",
+    response_model=SessionValidationResponse,
+)
+def validate_session(user=Depends(get_current_user)):
+    """Validate the forwarded Supabase JWT and return basic user info."""
+    return SessionValidationResponse(
+        valid=True,
+        user_id=str(user.get("sub")) if user.get("sub") else None,
+        email=user.get("email"),
+        role=user.get("role"),
+        reason=None,
+    )
+
+
 # PUBLIC_INTERFACE
 @router.get("/health", summary="Auth service health check")
 def auth_health():
